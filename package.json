@@ -1,0 +1,46 @@
+{
+  "name": "react-foundation-lib",
+  "version": "0.0.1",
+  "description": "Starter template for a new react library",
+  "main": "index.js",
+  "scripts": {
+    "clean-dist": "npm run remove-dist && mkdir dist",
+    "remove-dist": "rimraf ./dist",
+    "prebuild": "npm run clean-dist && npm run lint",
+    "build": "babel --loose es6.modules -d dist/ src/",
+    "lint": "eslint src",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryanwade/react-lib-starter.git"
+  },
+  "author": "ryanwade",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ryanwade/react-lib-starter/issues"
+  },
+  "homepage": "https://github.com/ryanwade/react-lib-starter#readme",
+  "peerDependencies": {
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.18.2",
+    "babel-eslint": "^7.1.0",
+    "babel-istanbul": "^0.11.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-1": "^6.16.0",
+    "eslint": "^3.10.2",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-react": "^6.7.1",
+    "react": "^15.4.0",
+    "react-addons-test-utils": "^15.4.0",
+    "react-dom": "^15.4.0"
+  },
+  "dependencies": {
+  }
+}
