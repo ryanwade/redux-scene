@@ -1,6 +1,5 @@
-//Import Components
-//var component           = require('./dist/component.js');
+var UI_Builder           = require('./dist/UI_Builder.js');
 
 module.exports = {
-    //component: component
+    UI_Builder: UI_Builder
 };
