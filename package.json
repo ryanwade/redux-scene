@@ -1,7 +1,7 @@
 {
-  "name": "react-foundation-lib",
+  "name": "redux-scene",
   "version": "0.0.1",
-  "description": "Starter template for a new react library",
+  "description": "State Generated UI",
   "main": "index.js",
   "scripts": {
     "clean-dist": "npm run remove-dist && mkdir dist",
@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ryanwade/react-lib-starter.git"
+    "url": "git+https://github.com/ryanwade/redux-scene.git"
   },
   "author": "ryanwade",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ryanwade/react-lib-starter/issues"
+    "url": "https://github.com/ryanwade/redux-scene/issues"
   },
-  "homepage": "https://github.com/ryanwade/react-lib-starter#readme",
+  "homepage": "https://github.com/ryanwade/redux-scene#readme",
   "peerDependencies": {
     "react": "^15.0.0",
     "react-dom": "^15.0.0"
@@ -39,8 +39,11 @@
     "eslint-plugin-react": "^6.7.1",
     "react": "^15.4.0",
     "react-addons-test-utils": "^15.4.0",
-    "react-dom": "^15.4.0"
+    "react-dom": "^15.4.0",
+    "react-redux": "^4.4.6",
+    "redux": "^3.6.0"
   },
   "dependencies": {
+    "lodash": "^4.17.2"
   }
 }
