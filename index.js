@@ -1,5 +1,9 @@
-var UI_Builder           = require('./dist/UI_Builder.js');
+var StageBuilder            = require('./dist/StageBuilder.js');
+var SceneBuilder            = require('./dist/SceneBuilder.js');
+var ComponentBuilder        = require('./dist/ComponentBuilder.js');
 
 module.exports = {
-    UI_Builder: UI_Builder
+    StageBuilder: StageBuilder,
+    SceneBuilder: SceneBuilder,
+    ComponentBuilder: ComponentBuilder
 };

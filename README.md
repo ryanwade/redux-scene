@@ -1,94 +1,182 @@
 # redux-scene
-State Generated UI
+React UI generated from redux state
 
-# Stage_Builder
-## <div id="Constructor">_function_ Constructor([React_Components](#Constructor), [FunctionAttrs_Builder](#FunctionAttrs_Builder))
-Create an instance of a Stage Builder.  Specify the collection of React Components to use.
-### args
-| args | description |
-|---|---|
-| Components | Collection of React Components ___{ name: Component, ... }___ |
-| [FunctionAttrs_Builder](#FunctionAttrs_Builder) | function that transforms Component.action object into function attributes |
+# Usage
+## Installation
+~~~
+npm install --save redux-scene
 
-## <div id="FunctionAttrs_Builder">_function_ FunctionAttrs_Builder([scenes](#Scene), [components](#Component), [actions](#Component))</div>
-Used to create functions to dispatch actions on UI events
-### args
-| args | description |
-|---|---|
-| scenes | Collection of [Scenes](#Scene) as found in state |
-| components | Collection of [Components](#Component) found in the current [Scene](#Scene) |
-| actions | Collection of actions to be transformed into Function Attributes. |
+//Dependencies
+npm install --save react react-dom redux react-redux
 
-## <div id="Build">_function_ Build([state](#State))</div>
-Builds a react component from a Stage
-### args
-| args | description |
-|---|---|
-| state | the [Stage](#Stage) to build 
+//Related
+npm install react-foundation-lib
+~~~
 
-# <div id="State">State</div>
-## <div id="Stage">Stage:</div>
+## Example
+~~~ js
+    import React from 'react';
+    import { render } from 'react-dom';
+    import { Provider } from 'react-redux'; 
+    import { createStore } from 'redux';
+    
+    import * as MyComponents from 'react-foundation-lib';
+    import { StageBuilder } from 'redux-scene';
+    function StageReducer(state, action) {
+        switch(action.type) {
+            //handle actions
+            default:
+                return state;
+        }
+    }
+
+    //Setup Redux
+    let store = createStore(StageReducer);
+
+    //Setup StageBuilder
+    function resolveStage(stage) {
+        return state.UI
+    }
+
+    //Render Stage
+    render((
+            <Provider store={store}>
+                <StageBuilder RComp={MyComponents} resolveStage={resolveStage} />
+            </Provider>
+        ),
+        document.getElementById('root')
+    );
+~~~
+# Docs
+## <div id="Stage">StageBuilder</div>
+Reads Stage data from state and builds a UI from collection of React Components and html elements
 ### Props
-| props | definition |
+| props | description |
 |---|---|
-| root | Specifies the root [Scene](#Scene) of the [Stage](#Stage) |
-| scenes | A collection of [Scene](#Scene) Objects |
-### Description
-This is the highest level of the state.  It contains a collection of [Scenes](#Scene) and the name of the current scene to build. 
+| RComp | _object_ Collection of React Components ___{ name: Component, ...}___ |
+| resolveStage | _function_ resolveStage(state) user defined function that returns the portion of state containing the Stage data |
+
 ### State
+This is the highest level of the state.  It contains a collection of [Scenes](#Scene) and the name of the current scene to build.
+| attrs | definition |
+|---|---|
+| root  | Specifies the root [Scene](#Scene) of the [Stage](#Stage) |
+| scenes | A collection of [Scene](#Scene) Objects |
+| data | [Stage](#Stage) state [data](#Data) |
+
 ~~~
 {
     root: rootScene,
     scenes: {
         sceneName: Scene,
         ...
+    },
+    data: {
+        dataName: value,
+        ...
     }
 }
 ~~~
-## <div id="Scene">Scene:</div>
+
+## <div id="Scene">SceneBuilder</div>
 ### Props
-| props | definition |
+| props | description |
 |---|---|
-| root | Specifies the root component of the scene.  (i.e. the highest level component of the scene) |
-| components | Collection of components.  Each has a unique name within the scene.  Components can only be used within the scene they are defined |
-### Description
-A Scene contains a collection of components and the heirarchy in which to present them.  While scenes can be used in other scenes, components can only be directly used in the scene in which they are defined.
+| Scene_ID | _string_ [Scene](#Scene) identifier |
+| RComp | _object_ Collection of React Components ___{ name: Component, ...}___ |
+| resolveStage | _function_ resolveStage(state) user defined function that returns the portion of state containing the Stage data |
+
 ### State
+A Scene contains a collection of components and the heirarchy in which to present them.  While scenes can be used in other scenes, components can only be directly used in the scene in which they are defined.
+| attrs | definition |
+|---|---|
+| root | Specifies the root [Component](#Component) of the [Scene](#Scene).  (i.e. the highest level component of the [Scene](#Scene)) |
+| components | Collection of [Components](#Component).  Each has a unique name within the [Scene](#Scene).  [Components](#Components) can only be used within the [Scene](#Scene) they are defined |
+| data | [Scene](#Scene) state [data](#Data) |
+
 ~~~
 {
     root: rootComponent,
     components: {
         componentName: Component,
         ...
+    },
+    data: {
+        dataName: value,
+        ...
     }
 }
 ~~~
 
-## <div id="Component">Component:</div>
+## <div id="Component">ComponentBuilder</div>
 ### Props
-| props | definition |
+| props | description |
 |---|---|
-| type | React Component Name or HTML5 element name |
-| attrs | key value pairs containing primitives, arrays, and objects |
-| dynamic | [Component](#Component) name or [[Component](#Component) name, ...]
-| actions | key value pairs that are transformed into functions by [FunctionAttrs_Builder](#FunctionAttrs_Builder)
-### Description
-A Component contains all of the information to construct a React Component or an HTML element.  Attributes for the component are divided into 3 types: 1) "attrs" or primitives , 2) "dynamic" or components, and 3) "actions" or functions.
+| Scene_ID | _string_ [Scene](#Scene) identifier |
+| Component_ID | _string_ [Component](#Component) identifier or _array_ [ _string_ [Component](#Component) identifier, ...]
+| RComp | _object_ Collection of React Components ___{ name: Component, ...}___ |
+| resolveStage | _function_ resolveStage(state) user defined function that returns the portion of state containing the Stage data |
+
 ### State
+A Component contains all of the information to construct a React Component or an HTML element.  Attributes for the component are divided into 3 types: 1) "attrs" or primitives , 2) "dynamic" or components, and 3) "actions" or functions.
+| attrs | definition |
+|---|---|
+| type | RComp or HTML element name |
+| attrs | attr: value pairs |
+| __fixed | contains primitives, arrays, and objects |
+| __data | derived from state [data](#Data). |
+| __components | _string_ [Component](#Component) identifier or _array_ [ _string_ [Component](#Component) identifier, ...] | 
+| events | event: actionType pairs to dispatch actions.  actions contain the actionType and the value from the component |
+| content | renders inside component |
+| __fixed | constant content to render such as a primitive |
+| __data | content derived from state [data](#Data) |
+| __components | _string_ [Component](#Component) identifier or _array_ [ _string_ [Component](#Component) identifier, ...] |
+| data | [Component](#Component) state [data](#Data) |
+
 ~~~
 {
-    type: typeName
+    type: typeName,
     attrs: {
-        key: value,
+        fixed: {
+            attr: value,
+            ...
+        },
+        data: {
+            attr: dataName,
+            ...
+        },
+        components: {
+            attr: componentName or [componentName, ...],
+            ...
+        }
+    },
+    events: {
+        event: actionType,
         ...
-    }
-    dynamic: {
-        key: componentName,
-        ...
-    }
-    actions: {
-        key: value,
+    },
+    content: {
+        fixed: value,
+        data: [
+            dataName,
+            ...
+        ],
+        components: [
+            componentName or [componentName, ...],
+            ...
+        ]
+    },
+    data: {
+        dataName: value,
         ...
     }
 }
 ~~~
+
+## <div id="Data">Data</div>
+Component Data is stored at all three levels and is searched in the following order
+
+[Component](#Component) Data -> [Scene](#Scene) Data -> [Stage](#Stage) Data
+
+When the identifier is found, the search stops.
+
+If the same name is used at multiple levels, the lowest level is returned effectively hiding data stored higher up the state.
