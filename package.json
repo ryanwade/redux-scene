@@ -10,7 +10,9 @@
     "build": "babel --loose es6.modules -d dist/ src/",
     "lint": "eslint src",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "npm run build"
+    "preversion": "npm run lint",
+    "version": "npm run build && git add -A dist",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
