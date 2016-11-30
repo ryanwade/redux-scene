@@ -139,42 +139,19 @@ A Component contains all of the information to construct a React Component or an
 {
     type: typeName,
     attrs: {
-        fixed: {
-            attr: value,
-            ...
-        },
-        data: {
-            attr: dataName,
-            ...
-        },
-        dataComponents: {
-            attr: dataName,
-            ...
-        },
-        components: {
-            attr: componentName or [componentName, ...],
-            ...
-        }
+        attrA: value,
+        attrB: [data, ref],
+        attrC: [component, ref],
+        attrD: [component, ref],
+        attrE: [equal: [value, [data: value]]],
+        attrF: [list, [value, [component, ref], [data, ref]]
     },
     events: {
         event: actionType,
         ...
     },
-    content: {
-        fixed: value,
-        data: [
-            dataName,
-            ...
-        ],
-        dataComponents: [
-            dataName,
-            ...
-        ]
-        components: [
-            componentName or [componentName, ...],
-            ...
-        ]
-    },
+    content: [Type Definition],
+        
     data: {
         dataName: value,
         ...

@@ -1,11 +1,12 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import _isObject from 'lodash/isObject';
-import _isNull from 'lodash/isNull';
+//import _isNull from 'lodash/isNull';
 import _isString from 'lodash/isString';
 import _isArray from 'lodash/isArray';
 
 import SceneBuilder from './SceneBuilder';
+import TypeParser from './TypeParser';
 /*
  * Component Builder Class
  */
@@ -20,6 +21,8 @@ class ComponentBuilder extends React.Component {
         this.getContent = this.getContent.bind(this);
         this.renderMulti = this.renderMulti.bind(this);
         this.renderSingle = this.renderSingle.bind(this);
+
+        this.TypeParser = (new TypeParser(this)).typeParser;
     }
     renderSingle(component) {
         if(!_isString(component)) return null;
@@ -39,19 +42,25 @@ class ComponentBuilder extends React.Component {
     getContent() {
         let { Component} = this.props;
         let { content = null} = Component;
-        if(_isNull(content)) return null;
+        return this.TypeParser(content);
+        /*if(_isNull(content)) return null;
         let { fixed = null, data = null, dataComponents = null, components = null} = content;
         let ret = [];
         if(!_isNull(fixed)) ret.push(fixed);
         if(!_isNull(data)) ret.push(...data.map(this.getData));
         if(!_isNull(dataComponents)) ret.push(this.renderMulti(dataComponents.map(this.getData)));
         if(!_isNull(components)) ret.push(this.renderMulti(components));
-        return ret;
+        return ret;*/
     }
     getAttrs() {
         let { Component } = this.props;
-        let { attrs = null } = Component;
-        if(_isNull(attrs)) return {};
+        let { attrs = {} } = Component;
+        let ret = {};
+        Object.keys(attrs).map(attr => {
+            ret[attr] = this.TypeParser(attrs[attr]);
+        });
+        return ret;
+        /*if(_isNull(attrs)) return {};
         let { fixed = {}, data = {}, dataComponents = {}, components = {} } = attrs;
         let ret = fixed;
         Object.keys(data).map(attr => {
@@ -63,7 +72,7 @@ class ComponentBuilder extends React.Component {
         Object.keys(components).map(attr => {
             ret[attr] = this.renderMulti(components[attr]);
         });
-        return ret;
+        return ret;*/
     }
     getEvents() {
         let { dispatch, Component } = this.props;

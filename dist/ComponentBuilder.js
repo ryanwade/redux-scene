@@ -18,10 +18,6 @@ var _isObject2 = require('lodash/isObject');
 
 var _isObject3 = _interopRequireDefault(_isObject2);
 
-var _isNull2 = require('lodash/isNull');
-
-var _isNull3 = _interopRequireDefault(_isNull2);
-
 var _isString2 = require('lodash/isString');
 
 var _isString3 = _interopRequireDefault(_isString2);
@@ -34,15 +30,19 @@ var _SceneBuilder = require('./SceneBuilder');
 
 var _SceneBuilder2 = _interopRequireDefault(_SceneBuilder);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _TypeParser = require('./TypeParser');
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+var _TypeParser2 = _interopRequireDefault(_TypeParser);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+//import _isNull from 'lodash/isNull';
+
 
 /*
  * Component Builder Class
@@ -62,6 +62,8 @@ var ComponentBuilder = function (_React$Component) {
         _this.getContent = _this.getContent.bind(_this);
         _this.renderMulti = _this.renderMulti.bind(_this);
         _this.renderSingle = _this.renderSingle.bind(_this);
+
+        _this.TypeParser = new _TypeParser2.default(_this).typeParser;
         return _this;
     }
 
@@ -104,22 +106,15 @@ var ComponentBuilder = function (_React$Component) {
             var _Component$content = Component.content,
                 content = _Component$content === undefined ? null : _Component$content;
 
-            if ((0, _isNull3.default)(content)) return null;
-            var _content$fixed = content.fixed,
-                fixed = _content$fixed === undefined ? null : _content$fixed,
-                _content$data = content.data,
-                data = _content$data === undefined ? null : _content$data,
-                _content$dataComponen = content.dataComponents,
-                dataComponents = _content$dataComponen === undefined ? null : _content$dataComponen,
-                _content$components = content.components,
-                components = _content$components === undefined ? null : _content$components;
-
-            var ret = [];
-            if (!(0, _isNull3.default)(fixed)) ret.push(fixed);
-            if (!(0, _isNull3.default)(data)) ret.push.apply(ret, _toConsumableArray(data.map(this.getData)));
-            if (!(0, _isNull3.default)(dataComponents)) ret.push(this.renderMulti(dataComponents.map(this.getData)));
-            if (!(0, _isNull3.default)(components)) ret.push(this.renderMulti(components));
-            return ret;
+            return this.TypeParser(content);
+            /*if(_isNull(content)) return null;
+            let { fixed = null, data = null, dataComponents = null, components = null} = content;
+            let ret = [];
+            if(!_isNull(fixed)) ret.push(fixed);
+            if(!_isNull(data)) ret.push(...data.map(this.getData));
+            if(!_isNull(dataComponents)) ret.push(this.renderMulti(dataComponents.map(this.getData)));
+            if(!_isNull(components)) ret.push(this.renderMulti(components));
+            return ret;*/
         }
     }, {
         key: 'getAttrs',
@@ -128,29 +123,26 @@ var ComponentBuilder = function (_React$Component) {
 
             var Component = this.props.Component;
             var _Component$attrs = Component.attrs,
-                attrs = _Component$attrs === undefined ? null : _Component$attrs;
+                attrs = _Component$attrs === undefined ? {} : _Component$attrs;
 
-            if ((0, _isNull3.default)(attrs)) return {};
-            var _attrs$fixed = attrs.fixed,
-                fixed = _attrs$fixed === undefined ? {} : _attrs$fixed,
-                _attrs$data = attrs.data,
-                data = _attrs$data === undefined ? {} : _attrs$data,
-                _attrs$dataComponents = attrs.dataComponents,
-                dataComponents = _attrs$dataComponents === undefined ? {} : _attrs$dataComponents,
-                _attrs$components = attrs.components,
-                components = _attrs$components === undefined ? {} : _attrs$components;
-
-            var ret = fixed;
-            Object.keys(data).map(function (attr) {
-                ret[attr] = _this2.getData(data[attr]);
-            });
-            Object.keys(dataComponents).map(function (attr) {
-                ret[attr] = _this2.renderMulti(_this2.getData(dataComponents[attr]));
-            });
-            Object.keys(components).map(function (attr) {
-                ret[attr] = _this2.renderMulti(components[attr]);
+            var ret = {};
+            Object.keys(attrs).map(function (attr) {
+                ret[attr] = _this2.TypeParser(attrs[attr]);
             });
             return ret;
+            /*if(_isNull(attrs)) return {};
+            let { fixed = {}, data = {}, dataComponents = {}, components = {} } = attrs;
+            let ret = fixed;
+            Object.keys(data).map(attr => {
+                ret[attr] = this.getData(data[attr]);
+            });
+            Object.keys(dataComponents).map(attr => {
+                ret[attr] = this.renderMulti(this.getData(dataComponents[attr]));
+            });
+            Object.keys(components).map(attr => {
+                ret[attr] = this.renderMulti(components[attr]);
+            });
+            return ret;*/
         }
     }, {
         key: 'getEvents',
