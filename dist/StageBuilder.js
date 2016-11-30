@@ -52,10 +52,10 @@ var StageBuilder = function (_React$Component) {
 }(_react2.default.Component);
 
 StageBuilder.propTypes = {
-    RComp: _react.PropTypes.obj.isRequired,
+    RComp: _react.PropTypes.object.isRequired,
     resolveStage: _react.PropTypes.func.isRequired,
     //redux
-    Stage: _react.PropTypes.obj.isRequired
+    Stage: _react.PropTypes.object.isRequired
 };
 
 function mapStateToProps(state, props) {

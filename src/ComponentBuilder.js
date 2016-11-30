@@ -83,14 +83,14 @@ class ComponentBuilder extends React.Component {
 ComponentBuilder.propTypes = {
     Scene_ID: PropTypes.string.isRequired,
     Component_ID: PropTypes.oneOf([PropTypes.string, PropTypes.array]).isRequired,
-    RComp: PropTypes.obj.isRequired,
+    RComp: PropTypes.object.isRequired,
     resolveStage: PropTypes.func.isRequired,
     //redux
-    Scene: PropTypes.obj.isRequired,
+    Scene: PropTypes.object.isRequired,
     Components: PropTypes.array.isRequired,
-    gData: PropTypes.obj,
-    sData: PropTypes.obj,
-    dispatch: PropTypes.obj
+    gData: PropTypes.object,
+    sData: PropTypes.object,
+    dispatch: PropTypes.object
 };
 
 function mapStateToProps(state, props) {

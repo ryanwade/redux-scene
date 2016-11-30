@@ -58,10 +58,10 @@ var SceneBuilder = function (_React$Component) {
 
 SceneBuilder.propTypes = {
     Scene_ID: _react.PropTypes.string.isRequired,
-    RComp: _react.PropTypes.obj.isRequired,
+    RComp: _react.PropTypes.object.isRequired,
     resolveStage: _react.PropTypes.func.isRequired,
     //redux
-    Scene: _react.PropTypes.obj.isRequired
+    Scene: _react.PropTypes.object.isRequired
 };
 
 function mapStateToProps(state, props) {

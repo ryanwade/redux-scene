@@ -174,14 +174,14 @@ var ComponentBuilder = function (_React$Component) {
 ComponentBuilder.propTypes = {
     Scene_ID: _react.PropTypes.string.isRequired,
     Component_ID: _react.PropTypes.oneOf([_react.PropTypes.string, _react.PropTypes.array]).isRequired,
-    RComp: _react.PropTypes.obj.isRequired,
+    RComp: _react.PropTypes.object.isRequired,
     resolveStage: _react.PropTypes.func.isRequired,
     //redux
-    Scene: _react.PropTypes.obj.isRequired,
+    Scene: _react.PropTypes.object.isRequired,
     Components: _react.PropTypes.array.isRequired,
-    gData: _react.PropTypes.obj,
-    sData: _react.PropTypes.obj,
-    dispatch: _react.PropTypes.obj
+    gData: _react.PropTypes.object,
+    sData: _react.PropTypes.object,
+    dispatch: _react.PropTypes.object
 };
 
 function mapStateToProps(state, props) {

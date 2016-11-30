@@ -19,10 +19,10 @@ class StageBuilder extends React.Component {
     }
 }
 StageBuilder.propTypes = {
-    RComp: PropTypes.obj.isRequired,
+    RComp: PropTypes.object.isRequired,
     resolveStage: PropTypes.func.isRequired,
     //redux
-    Stage: PropTypes.obj.isRequired
+    Stage: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state, props) {

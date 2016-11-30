@@ -20,10 +20,10 @@ class SceneBuilder extends React.Component {
 }
 SceneBuilder.propTypes = {
     Scene_ID: PropTypes.string.isRequired,
-    RComp: PropTypes.obj.isRequired,
+    RComp: PropTypes.object.isRequired,
     resolveStage: PropTypes.func.isRequired,
     //redux
-    Scene: PropTypes.obj.isRequired
+    Scene: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state, props) {
