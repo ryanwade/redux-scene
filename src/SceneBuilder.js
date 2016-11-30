@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import _isObject from 'lodash/isObject';
+import _isUndefined from 'lodash/isUndefined';
 
 import ComponentBuilder from './ComponentBuilder';
 
@@ -13,7 +14,7 @@ class SceneBuilder extends React.Component {
     }
     render() {
         let { Scene, Scene_ID, RComp, resolveStage} = this.props;
-        return (!_isObject(Scene))? null : (
+        return (!_isObject(Scene) || _isUndefined(Scene.root))? null : (
             <ComponentBuilder {...{Scene_ID, Component_ID: Scene.root, RComp, resolveStage}} />
         );
     }

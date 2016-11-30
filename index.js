@@ -1,6 +1,6 @@
-var StageBuilder            = require('./dist/StageBuilder.js');
-var SceneBuilder            = require('./dist/SceneBuilder.js');
-var ComponentBuilder        = require('./dist/ComponentBuilder.js');
+var StageBuilder            = require('./dist/StageBuilder.js').default;
+var SceneBuilder            = require('./dist/SceneBuilder.js').default;
+var ComponentBuilder        = require('./dist/ComponentBuilder.js').default;
 
 module.exports = {
     StageBuilder: StageBuilder,

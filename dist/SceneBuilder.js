@@ -16,6 +16,10 @@ var _isObject2 = require('lodash/isObject');
 
 var _isObject3 = _interopRequireDefault(_isObject2);
 
+var _isUndefined2 = require('lodash/isUndefined');
+
+var _isUndefined3 = _interopRequireDefault(_isUndefined2);
+
 var _ComponentBuilder = require('./ComponentBuilder');
 
 var _ComponentBuilder2 = _interopRequireDefault(_ComponentBuilder);
@@ -49,7 +53,7 @@ var SceneBuilder = function (_React$Component) {
                 RComp = _props.RComp,
                 resolveStage = _props.resolveStage;
 
-            return !(0, _isObject3.default)(Scene) ? null : _react2.default.createElement(_ComponentBuilder2.default, { Scene_ID: Scene_ID, Component_ID: Scene.root, RComp: RComp, resolveStage: resolveStage });
+            return !(0, _isObject3.default)(Scene) || (0, _isUndefined3.default)(Scene.root) ? null : _react2.default.createElement(_ComponentBuilder2.default, { Scene_ID: Scene_ID, Component_ID: Scene.root, RComp: RComp, resolveStage: resolveStage });
         }
     }]);
 
