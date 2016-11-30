@@ -1,6 +1,6 @@
 {
   "name": "redux-scene",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "State Generated UI",
   "main": "index.js",
   "scripts": {
