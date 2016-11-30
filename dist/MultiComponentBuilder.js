@@ -10,19 +10,17 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRedux = require('react-redux');
+var _isNull2 = require('lodash/isNull');
 
-var _isObject2 = require('lodash/isObject');
+var _isNull3 = _interopRequireDefault(_isNull2);
 
-var _isObject3 = _interopRequireDefault(_isObject2);
+var _isString2 = require('lodash/isString');
 
-var _isUndefined2 = require('lodash/isUndefined');
+var _isString3 = _interopRequireDefault(_isString2);
 
-var _isUndefined3 = _interopRequireDefault(_isUndefined2);
+var _ComponentBuilder = require('./ComponentBuilder');
 
-var _MultiComponentBuilder = require('./MultiComponentBuilder');
-
-var _MultiComponentBuilder2 = _interopRequireDefault(_MultiComponentBuilder);
+var _ComponentBuilder2 = _interopRequireDefault(_ComponentBuilder);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32,51 +30,54 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-/*
- * Scene Builder Class
- */
-var SceneBuilder = function (_React$Component) {
-    _inherits(SceneBuilder, _React$Component);
+var MultiComponentBuilder = function (_React$Component) {
+    _inherits(MultiComponentBuilder, _React$Component);
 
-    function SceneBuilder(props) {
-        _classCallCheck(this, SceneBuilder);
+    function MultiComponentBuilder(props) {
+        _classCallCheck(this, MultiComponentBuilder);
 
-        return _possibleConstructorReturn(this, (SceneBuilder.__proto__ || Object.getPrototypeOf(SceneBuilder)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (MultiComponentBuilder.__proto__ || Object.getPrototypeOf(MultiComponentBuilder)).call(this, props));
+
+        _this.renderComponent = _this.renderComponent.bind(_this);
+        return _this;
     }
 
-    _createClass(SceneBuilder, [{
-        key: 'render',
-        value: function render() {
+    _createClass(MultiComponentBuilder, [{
+        key: 'renderComponent',
+        value: function renderComponent(Component_ID) {
             var _props = this.props,
-                Scene = _props.Scene,
                 Scene_ID = _props.Scene_ID,
                 RComp = _props.RComp,
                 resolveStage = _props.resolveStage;
 
-            return !(0, _isObject3.default)(Scene) || (0, _isUndefined3.default)(Scene.root) ? null : _react2.default.createElement(_MultiComponentBuilder2.default, { Scene_ID: Scene_ID, Component_ID: Scene.root, RComp: RComp, resolveStage: resolveStage });
+            return _react2.default.createElement(_ComponentBuilder2.default, { Scene_ID: Scene_ID, Component_ID: Component_ID, RComp: RComp, resolveStage: resolveStage });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _props$Component_ID = this.props.Component_ID,
+                Component_ID = _props$Component_ID === undefined ? null : _props$Component_ID;
+
+            console.log("Builder:", Component_ID);
+            if ((0, _isNull3.default)(Component_ID)) return null;
+            if ((0, _isString3.default)(Component_ID)) return this.renderComponent(Component_ID);
+            if (Component_ID.length == 1) return this.renderComponent(Component_ID[0]);
+            return _react2.default.createElement(
+                'div',
+                null,
+                Component_ID.map(this.renderComponent)
+            );
         }
     }]);
 
-    return SceneBuilder;
+    return MultiComponentBuilder;
 }(_react2.default.Component);
 
-SceneBuilder.propTypes = {
+MultiComponentBuilder.propTypes = {
     Scene_ID: _react.PropTypes.string.isRequired,
+    Component_ID: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.array]).isRequired,
     RComp: _react.PropTypes.object.isRequired,
-    resolveStage: _react.PropTypes.func.isRequired,
-    //redux
-    Scene: _react.PropTypes.object
+    resolveStage: _react.PropTypes.func.isRequired
 };
 
-function mapStateToProps(state, props) {
-    var resolveStage = props.resolveStage,
-        Scene_ID = props.Scene_ID;
-
-    var Stage = resolveStage(state);
-    var Scene = Stage.scenes[Scene_ID];
-    return {
-        Scene: Scene
-    };
-}
-
-exports.default = (0, _reactRedux.connect)(mapStateToProps)(SceneBuilder);
+exports.default = MultiComponentBuilder;

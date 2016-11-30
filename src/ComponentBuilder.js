@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import _isObject from 'lodash/isObject';
-import _isArray from 'lodash/isArray';
 import _isNull from 'lodash/isNull';
 
 import SceneBuilder from './SceneBuilder';
+import MultiComponentBuilder from './MultiComponentBuilder';
 /*
  * Component Builder Class
  */
@@ -12,41 +12,45 @@ class ComponentBuilder extends React.Component {
     constructor(props) {
         super(props);
 
+        this.getData = this.getData.bind(this);
         this.getAttrs = this.getAttrs.bind(this);
         this.getEvents = this.getEvents.bind(this);
         this.getAction = this.getAction.bind(this);
         this.getContent = this.getContent.bind(this);
-        this.renderComponent = this.renderComponent.bind(this);
     }
-    getContent(Component, ID) {
-        let { gData = {}, Scene, Scene_ID, RComp, resolveStage } = this.props;
+    getData(id) {
+        let { gData = {}, Scene, Component} = this.props;
         let { data: sData = {} } = Scene;
-        let { data: lData = {}, content = null} = Component;
+        let { data: lData = {} } = Component;
+        return lData[id] || sData[id] || gData[id];
+    }
+    getContent() {
+        let { Scene_ID, Component, Component_ID, RComp, resolveStage } = this.props;
+        let { content = null} = Component;
         if(_isNull(content)) return null;
         let { fixed = null, data = null, components = null} = content;
         let ret = [];
         if(!_isNull(fixed)) ret.push(fixed);
-        if(!_isNull(data)) ret.push(...data.map(d => lData[d] || sData[d] || gData[d]));
-        if(!_isNull(components)) ret.push(<ComponentBuilderC key={"_" + ID} {...{Scene_ID, Component_ID: components, RComp, resolveStage}} />);
+        if(!_isNull(data)) ret.push(...data.map(this.getData));
+        if(!_isNull(components)) ret.push(<MultiComponentBuilder key={"_" + Component_ID} {...{Scene_ID, Component_ID: components, RComp, resolveStage}} />);
         return ret;
     }
-    getAttrs(Component) {
-        let { gData = {}, Scene, Scene_ID, RComp, resolveStage } = this.props;
-        let { data: sData = {} } = Scene;
-        let { data: lData = {}, attrs = null } = Component;
+    getAttrs() {
+        let { Scene_ID, Component, RComp, resolveStage } = this.props;
+        let { attrs = null } = Component;
         if(_isNull(attrs)) return {};
         let { fixed = {}, data = {}, components = {} } = attrs;
         let ret = fixed;
         Object.keys(data).map(attr => {
-            ret[attr] = lData[data[attr]] || sData[data[attr]] || gData[data[attr]];
+            ret[attr] = this.getData(data[attr]);
         });
         Object.keys(components).map(attr => {
-            ret[attr] = (<ComponentBuilderC key={components[attr]} {...{Scene_ID, Component_ID: components[attr], RComp, resolveStage}} />);
+            ret[attr] = (<MultiComponentBuilder key={components[attr]} {...{Scene_ID, Component_ID: components[attr], RComp, resolveStage}} />);
         });
         return ret;
     }
-    getEvents(Component) {
-        let { dispatch} = this.props;
+    getEvents() {
+        let { dispatch, Component } = this.props;
         let { events = {} } = Component;
         let ret = {
             onChange: (e, getVal) => {
@@ -69,36 +73,29 @@ class ComponentBuilder extends React.Component {
             value: getVal(e)
         };
     }
-    renderComponent(component) {
-        let { RComp, resolveStage } = this.props;
-        let { Component = null, ID } = component;
+    render() {
+        let { Component_ID, Component, RComp, resolveStage } = this.props;
         if(!_isObject(Component)) {
-            return <SceneBuilder {...{Scene_ID: ID, RComp, resolveStage}} />;
+            console.log("Scene:", Component_ID);
+            return <SceneBuilder key={Component_ID} {...{Scene_ID: Component_ID, RComp, resolveStage}} />;
         }
         let ReactComponent = RComp[Component.type] || Component.type;
+        console.log("Component:", Component_ID);
         return (
-            <ReactComponent key={ID} {...this.getAttrs(Component)} {...this.getEvents(Component)} >
-                {this.getContent(Component, ID)}
+            <ReactComponent key={Component_ID} {...this.getAttrs()} {...this.getEvents()} >
+                {this.getContent()}
             </ReactComponent>
         );
-    }
-    render() {
-        let { Components = null } = this.props;
-        if(_isNull(Components)) return null;
-        if(Components.length == 1) return this.renderComponent(Components[0]);
-        return (<div>
-            {Components.map(this.renderComponent)}
-        </div>);
     }
 }
 ComponentBuilder.propTypes = {
     Scene_ID: PropTypes.string.isRequired,
-    Component_ID: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
+    Component_ID: PropTypes.string.isRequired,
     RComp: PropTypes.object.isRequired,
     resolveStage: PropTypes.func.isRequired,
     //redux
     Scene: PropTypes.object,
-    Components: PropTypes.array,
+    Component: PropTypes.object,
     gData: PropTypes.object,
     dispatch: PropTypes.func
 };
@@ -107,13 +104,10 @@ function mapStateToProps(state, props) {
     let { resolveStage, Scene_ID, Component_ID} = props;
     let Stage = resolveStage(state);
     let Scene = Stage.scenes[Scene_ID];
-    Component_ID = _isArray(Component_ID)? Component_ID : [Component_ID];
-    let Components = Component_ID.map(ID => {
-        return {ID, Component: Scene.components[ID]};
-    }) || [];
+    let Component = Scene.components[Component_ID];
     return {
         Scene,
-        Components,
+        Component,
         gData: Stage.data
     };
 }
@@ -123,9 +117,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-let ComponentBuilderC = connect(
+export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(ComponentBuilder);
-
-export default ComponentBuilderC;
