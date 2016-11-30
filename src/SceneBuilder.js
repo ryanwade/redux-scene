@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import _isObject from 'lodash/isObject';
-import _isUndefined from 'lodash/isUndefined';
+import _isString from 'lodash/isString';
+import _isArray from 'lodash/isArray';
 
-import MultiComponentBuilder from './MultiComponentBuilder';
+import ComponentBuilder from './ComponentBuilder';
 
 /*
  * Scene Builder Class
@@ -11,12 +11,23 @@ import MultiComponentBuilder from './MultiComponentBuilder';
 class SceneBuilder extends React.Component {
     constructor(props) {
         super(props);
+
+        this.renderComponent = this.renderComponent.bind(this);
+    }
+    renderComponent(component) {
+        let { Scene_ID, RComp, resolveStage } = this.props;
+        return <ComponentBuilder key={component} {...{Scene_ID, Component_ID: component, RComp, resolveStage}} />;
     }
     render() {
-        let { Scene, Scene_ID, RComp, resolveStage} = this.props;
-        return (!_isObject(Scene) || _isUndefined(Scene.root))? null : (
-            <MultiComponentBuilder {...{Scene_ID, Component_ID: Scene.root, RComp, resolveStage}} />
+        let { Scene = {} } = this.props;
+        let { root = null } = Scene;
+        if (_isString(root)) return this.renderComponent(Scene.root);
+        if (_isArray(root)) return (
+            <div>
+                {Scene.root.map(this.renderComponent)}
+            </div>
         );
+        return null;
     }
 }
 SceneBuilder.propTypes = {

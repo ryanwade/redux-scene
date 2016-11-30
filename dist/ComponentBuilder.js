@@ -22,13 +22,17 @@ var _isNull2 = require('lodash/isNull');
 
 var _isNull3 = _interopRequireDefault(_isNull2);
 
+var _isString2 = require('lodash/isString');
+
+var _isString3 = _interopRequireDefault(_isString2);
+
+var _isArray2 = require('lodash/isArray');
+
+var _isArray3 = _interopRequireDefault(_isArray2);
+
 var _SceneBuilder = require('./SceneBuilder');
 
 var _SceneBuilder2 = _interopRequireDefault(_SceneBuilder);
-
-var _MultiComponentBuilder = require('./MultiComponentBuilder');
-
-var _MultiComponentBuilder2 = _interopRequireDefault(_MultiComponentBuilder);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -56,17 +60,36 @@ var ComponentBuilder = function (_React$Component) {
         _this.getEvents = _this.getEvents.bind(_this);
         _this.getAction = _this.getAction.bind(_this);
         _this.getContent = _this.getContent.bind(_this);
+        _this.renderMulti = _this.renderMulti.bind(_this);
+        _this.renderSingle = _this.renderSingle.bind(_this);
         return _this;
     }
 
     _createClass(ComponentBuilder, [{
+        key: 'renderSingle',
+        value: function renderSingle(component) {
+            if (!(0, _isString3.default)(component)) return null;
+            var _props = this.props,
+                Scene_ID = _props.Scene_ID,
+                RComp = _props.RComp,
+                resolveStage = _props.resolveStage;
+
+            return _react2.default.createElement(ComponentBuilderM, _extends({ key: component }, { Scene_ID: Scene_ID, Component_ID: component, RComp: RComp, resolveStage: resolveStage }));
+        }
+    }, {
+        key: 'renderMulti',
+        value: function renderMulti(components) {
+            if (!(0, _isArray3.default)(components)) return this.renderSingle(components);
+            return components.map(this.renderSingle);
+        }
+    }, {
         key: 'getData',
         value: function getData(id) {
-            var _props = this.props,
-                _props$gData = _props.gData,
-                gData = _props$gData === undefined ? {} : _props$gData,
-                Scene = _props.Scene,
-                Component = _props.Component;
+            var _props2 = this.props,
+                _props2$gData = _props2.gData,
+                gData = _props2$gData === undefined ? {} : _props2$gData,
+                Scene = _props2.Scene,
+                Component = _props2.Component;
             var _Scene$data = Scene.data,
                 sData = _Scene$data === undefined ? {} : _Scene$data;
             var _Component$data = Component.data,
@@ -77,12 +100,7 @@ var ComponentBuilder = function (_React$Component) {
     }, {
         key: 'getContent',
         value: function getContent() {
-            var _props2 = this.props,
-                Scene_ID = _props2.Scene_ID,
-                Component = _props2.Component,
-                Component_ID = _props2.Component_ID,
-                RComp = _props2.RComp,
-                resolveStage = _props2.resolveStage;
+            var Component = this.props.Component;
             var _Component$content = Component.content,
                 content = _Component$content === undefined ? null : _Component$content;
 
@@ -91,13 +109,16 @@ var ComponentBuilder = function (_React$Component) {
                 fixed = _content$fixed === undefined ? null : _content$fixed,
                 _content$data = content.data,
                 data = _content$data === undefined ? null : _content$data,
+                _content$dataComponen = content.dataComponents,
+                dataComponents = _content$dataComponen === undefined ? null : _content$dataComponen,
                 _content$components = content.components,
                 components = _content$components === undefined ? null : _content$components;
 
             var ret = [];
             if (!(0, _isNull3.default)(fixed)) ret.push(fixed);
             if (!(0, _isNull3.default)(data)) ret.push.apply(ret, _toConsumableArray(data.map(this.getData)));
-            if (!(0, _isNull3.default)(components)) ret.push(_react2.default.createElement(_MultiComponentBuilder2.default, _extends({ key: "_" + Component_ID }, { Scene_ID: Scene_ID, Component_ID: components, RComp: RComp, resolveStage: resolveStage })));
+            if (!(0, _isNull3.default)(dataComponents)) ret.push(this.renderMulti(dataComponents.map(this.getData)));
+            if (!(0, _isNull3.default)(components)) ret.push(this.renderMulti(components));
             return ret;
         }
     }, {
@@ -105,11 +126,7 @@ var ComponentBuilder = function (_React$Component) {
         value: function getAttrs() {
             var _this2 = this;
 
-            var _props3 = this.props,
-                Scene_ID = _props3.Scene_ID,
-                Component = _props3.Component,
-                RComp = _props3.RComp,
-                resolveStage = _props3.resolveStage;
+            var Component = this.props.Component;
             var _Component$attrs = Component.attrs,
                 attrs = _Component$attrs === undefined ? null : _Component$attrs;
 
@@ -118,6 +135,8 @@ var ComponentBuilder = function (_React$Component) {
                 fixed = _attrs$fixed === undefined ? {} : _attrs$fixed,
                 _attrs$data = attrs.data,
                 data = _attrs$data === undefined ? {} : _attrs$data,
+                _attrs$dataComponents = attrs.dataComponents,
+                dataComponents = _attrs$dataComponents === undefined ? {} : _attrs$dataComponents,
                 _attrs$components = attrs.components,
                 components = _attrs$components === undefined ? {} : _attrs$components;
 
@@ -125,8 +144,11 @@ var ComponentBuilder = function (_React$Component) {
             Object.keys(data).map(function (attr) {
                 ret[attr] = _this2.getData(data[attr]);
             });
+            Object.keys(dataComponents).map(function (attr) {
+                ret[attr] = _this2.renderMulti(_this2.getData(dataComponents[attr]));
+            });
             Object.keys(components).map(function (attr) {
-                ret[attr] = _react2.default.createElement(_MultiComponentBuilder2.default, _extends({ key: components[attr] }, { Scene_ID: Scene_ID, Component_ID: components[attr], RComp: RComp, resolveStage: resolveStage }));
+                ret[attr] = _this2.renderMulti(components[attr]);
             });
             return ret;
         }
@@ -135,17 +157,13 @@ var ComponentBuilder = function (_React$Component) {
         value: function getEvents() {
             var _this3 = this;
 
-            var _props4 = this.props,
-                dispatch = _props4.dispatch,
-                Component = _props4.Component;
+            var _props3 = this.props,
+                dispatch = _props3.dispatch,
+                Component = _props3.Component;
             var _Component$events = Component.events,
                 events = _Component$events === undefined ? {} : _Component$events;
 
-            var ret = {
-                onChange: function onChange(e, getVal) {
-                    dispatch(_this3.getAction("LOCAL_CHANGE", e, getVal));
-                }
-            };
+            var ret = {};
             Object.keys(events).map(function (attr) {
                 ret[attr] = function (e, getVal) {
                     dispatch(_this3.getAction(events[attr], e, getVal));
@@ -159,9 +177,9 @@ var ComponentBuilder = function (_React$Component) {
             var getVal = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (e) {
                 return e.target.value;
             };
-            var _props5 = this.props,
-                Scene_ID = _props5.Scene_ID,
-                Component_ID = _props5.Component_ID;
+            var _props4 = this.props,
+                Scene_ID = _props4.Scene_ID,
+                Component_ID = _props4.Component_ID;
 
             return {
                 type: type,
@@ -173,21 +191,19 @@ var ComponentBuilder = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _props6 = this.props,
-                Component_ID = _props6.Component_ID,
-                Component = _props6.Component,
-                RComp = _props6.RComp,
-                resolveStage = _props6.resolveStage;
+            var _props5 = this.props,
+                Component_ID = _props5.Component_ID,
+                Component = _props5.Component,
+                RComp = _props5.RComp,
+                resolveStage = _props5.resolveStage;
 
             if (!(0, _isObject3.default)(Component)) {
-                console.log("Scene:", Component_ID);
-                return _react2.default.createElement(_SceneBuilder2.default, _extends({ key: Component_ID }, { Scene_ID: Component_ID, RComp: RComp, resolveStage: resolveStage }));
+                return _react2.default.createElement(_SceneBuilder2.default, { Scene_ID: Component_ID, RComp: RComp, resolveStage: resolveStage });
             }
             var ReactComponent = RComp[Component.type] || Component.type;
-            console.log("Component:", Component_ID);
             return _react2.default.createElement(
                 ReactComponent,
-                _extends({ key: Component_ID }, this.getAttrs(), this.getEvents()),
+                _extends({}, this.getAttrs(), this.getEvents()),
                 this.getContent()
             );
         }
@@ -228,4 +244,6 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentBuilder);
+var ComponentBuilderM = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ComponentBuilder);
+
+exports.default = ComponentBuilderM;
