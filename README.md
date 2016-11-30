@@ -90,13 +90,13 @@ This is the highest level of the state.  It contains a collection of [Scenes](#S
 A Scene contains a collection of components and the heirarchy in which to present them.  While scenes can be used in other scenes, components can only be directly used in the scene in which they are defined.
 | attrs | definition |
 |---|---|
-| root | Specifies the root [Component](#Component) of the [Scene](#Scene).  (i.e. the highest level component of the [Scene](#Scene)) |
+| root | _string_ [Component](#Component) identifier or _array_ [_string_ [Component](#Component) identifier, ...]   Specifies the highest level components of the [Scene](#Scene) |
 | components | Collection of [Components](#Component).  Each has a unique name within the [Scene](#Scene).  [Components](#Components) can only be used within the [Scene](#Scene) they are defined |
 | data | [Scene](#Scene) state [data](#Data) |
 
 ~~~
 {
-    root: rootComponent,
+    root: componentName or [componentName, ...],
     components: {
         componentName: Component,
         ...
@@ -125,11 +125,13 @@ A Component contains all of the information to construct a React Component or an
 | attrs | attr: value pairs |
 | __fixed | contains primitives, arrays, and objects |
 | __data | derived from state [data](#Data). |
+| __dataComponents | component names derived from state [data](#Data) |
 | __components | _string_ [Component](#Component) identifier or _array_ [ _string_ [Component](#Component) identifier, ...] | 
 | events | event: actionType pairs to dispatch actions.  actions contain the actionType and the value from the component |
 | content | renders inside component |
 | __fixed | constant content to render such as a primitive |
 | __data | content derived from state [data](#Data) |
+| __dataComponents | component names derived from state [data](#Data) |
 | __components | _string_ [Component](#Component) identifier or _array_ [ _string_ [Component](#Component) identifier, ...] |
 | data | [Component](#Component) state [data](#Data) |
 
@@ -142,6 +144,10 @@ A Component contains all of the information to construct a React Component or an
             ...
         },
         data: {
+            attr: dataName,
+            ...
+        },
+        dataComponents: {
             attr: dataName,
             ...
         },
@@ -160,6 +166,10 @@ A Component contains all of the information to construct a React Component or an
             dataName,
             ...
         ],
+        dataComponents: [
+            dataName,
+            ...
+        ]
         components: [
             componentName or [componentName, ...],
             ...
