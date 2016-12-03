@@ -21,7 +21,7 @@ npm install react-foundation-lib
     import { createStore } from 'redux';
     
     import * as MyComponents from 'react-foundation-lib';
-    import { StageBuilder } from 'redux-scene';
+    import { Builder } from 'redux-scene';
     function StageReducer(state, action) {
         switch(action.type) {
             //handle actions
@@ -34,27 +34,55 @@ npm install react-foundation-lib
     let store = createStore(StageReducer);
 
     //Setup StageBuilder
-    function resolveStage(stage) {
+    function resolveUI(stage) {
         return state.UI
     }
 
+    let MyBuilder = new Builder(MyComponents, resolve, store.dispatch); 
     //Render Stage
     render((
             <Provider store={store}>
-                <StageBuilder RComp={MyComponents} resolveStage={resolveStage} />
+                <MyBuilder.Stage />
             </Provider>
         ),
         document.getElementById('root')
     );
 ~~~
-# Docs
-## <div id="Stage">StageBuilder</div>
-Reads Stage data from state and builds a UI from collection of React Components and html elements
+# <div id="Builder">Builder</div>
+The [Builder](#Builder) class configures the redux-stage 
+
 ### Props
 | props | description |
 |---|---|
 | RComp | _object_ Collection of React Components ___{ name: Component, ...}___ |
-| resolveStage | _function_ resolveStage(state) user defined function that returns the portion of state containing the Stage data |
+| resolve | _function_ resolve(state) user defined function that returns the portion of state containing the Stage data |
+| dispatch | the redux dispatch funciton |
+
+### __function__ Stage(props)</div>
+returns a [Stage](#Stage) component with the given props.
+
+~~~ js
+    <MyBuilder.Stage />
+~~~
+
+### __function__ Scene(props)
+returns a [Scene](#Scene) component with the given props.
+
+~~~ js
+    <MyBuilder.Scene Scene_ID={"scene_a"}/>
+~~~
+
+### __function__ Component(props)
+returns a [Component](#Component) component with the given props.
+
+~~~ js
+    <MyBuilder.Component Scene_ID={"scene_a"} Component_ID={"component_a"} />
+~~~
+
+
+# Elements
+## <div id="Stage">Stage</div>
+renders the entire redux-stage specified by the [Builder](#Builder) Object 
 
 ### State
 This is the highest level of the state.  It contains a collection of [Scenes](#Scene) and the name of the current scene to build.
@@ -62,7 +90,6 @@ This is the highest level of the state.  It contains a collection of [Scenes](#S
 |---|---|
 | root  | Specifies the root [Scene](#Scene) of the [Stage](#Stage) |
 | scenes | A collection of [Scene](#Scene) Objects |
-| data | [Stage](#Stage) state [data](#Data) |
 
 ~~~
 {
@@ -70,21 +97,15 @@ This is the highest level of the state.  It contains a collection of [Scenes](#S
     scenes: {
         sceneName: Scene,
         ...
-    },
-    data: {
-        dataName: value,
-        ...
     }
 }
 ~~~
 
-## <div id="Scene">SceneBuilder</div>
+## <div id="Scene">Scene</div>
 ### Props
 | props | description |
 |---|---|
 | Scene_ID | _string_ [Scene](#Scene) identifier |
-| RComp | _object_ Collection of React Components ___{ name: Component, ...}___ |
-| resolveStage | _function_ resolveStage(state) user defined function that returns the portion of state containing the Stage data |
 
 ### State
 A Scene contains a collection of components and the heirarchy in which to present them.  While scenes can be used in other scenes, components can only be directly used in the scene in which they are defined.
@@ -92,7 +113,6 @@ A Scene contains a collection of components and the heirarchy in which to presen
 |---|---|
 | root | _string_ [Component](#Component) identifier or _array_ [_string_ [Component](#Component) identifier, ...]   Specifies the highest level components of the [Scene](#Scene) |
 | components | Collection of [Components](#Component).  Each has a unique name within the [Scene](#Scene).  [Components](#Components) can only be used within the [Scene](#Scene) they are defined |
-| data | [Scene](#Scene) state [data](#Data) |
 
 ~~~
 {
@@ -100,70 +120,73 @@ A Scene contains a collection of components and the heirarchy in which to presen
     components: {
         componentName: Component,
         ...
-    },
-    data: {
-        dataName: value,
-        ...
     }
 }
 ~~~
 
-## <div id="Component">ComponentBuilder</div>
+## <div id="Component">Component</div>
 ### Props
 | props | description |
 |---|---|
 | Scene_ID | _string_ [Scene](#Scene) identifier |
 | Component_ID | _string_ [Component](#Component) identifier or _array_ [ _string_ [Component](#Component) identifier, ...]
-| RComp | _object_ Collection of React Components ___{ name: Component, ...}___ |
-| resolveStage | _function_ resolveStage(state) user defined function that returns the portion of state containing the Stage data |
 
 ### State
-A Component contains all of the information to construct a React Component or an HTML element.  Attributes for the component are divided into 3 types: 1) "attrs" or primitives , 2) "dynamic" or components, and 3) "actions" or functions.
+A [Component](#Component) contains all of the information to construct a React Component or an HTML element.
+
 | attrs | definition |
 |---|---|
 | type | RComp or HTML element name |
-| attrs | attr: value pairs |
-| __fixed | contains primitives, arrays, and objects |
-| __data | derived from state [data](#Data). |
-| __dataComponents | component names derived from state [data](#Data) |
-| __components | _string_ [Component](#Component) identifier or _array_ [ _string_ [Component](#Component) identifier, ...] | 
+| attrs | attr: [TypeGrammar](#TypeGrammar); defines attributes | 
 | events | event: actionType pairs to dispatch actions.  actions contain the actionType and the value from the component |
-| content | renders inside component |
-| __fixed | constant content to render such as a primitive |
-| __data | content derived from state [data](#Data) |
-| __dataComponents | component names derived from state [data](#Data) |
-| __components | _string_ [Component](#Component) identifier or _array_ [ _string_ [Component](#Component) identifier, ...] |
-| data | [Component](#Component) state [data](#Data) |
+| content | [TypeGrammar](#TypeGrammar); content to render inside component 
 
 ~~~
 {
     type: typeName,
     attrs: {
-        attrA: value,
-        attrB: [data, ref],
-        attrC: [component, ref],
-        attrD: [component, ref],
-        attrE: [equal: [value, [data: value]]],
-        attrF: [list, [value, [component, ref], [data, ref]]
+        attr: TypeGrammar,
+        ...
     },
     events: {
         event: actionType,
         ...
     },
-    content: [Type Definition],
-        
-    data: {
-        dataName: value,
-        ...
-    }
+    content: TypeGrammar
 }
 ~~~
 
-## <div id="Data">Data</div>
-Component Data is stored at all three levels and is searched in the following order
+# <div id="TypeGrammar">Type Grammar</div>
+~~~
+TYPE:
+       VALUE_TYPE
+    || COMPONENT_TYPE
+    || LIST_TYPE
+    || ANY
 
-[Component](#Component) Data -> [Scene](#Scene) Data -> [Stage](#Stage) Data
+LIST_TYPE:
+    ["list", LIST<TYPE>]
+VALUE_TYPE:
+    ["value", ANY]
+COMPONENT_TYPE:
+    ["component", LIST<IDENTIFIER>]
 
-When the identifier is found, the search stops.
 
-If the same name is used at multiple levels, the lowest level is returned effectively hiding data stored higher up the state.
+LIST<L_TYPE>:
+    L_TYPE
+    || [L\_TYPE, ...]
+
+
+ANY:
+    !undefined
+IDENTIFIER:
+    [a-Z1-9\_-] ___String___
+~~~
+
+### Examples:
+1. "A String"
+2. ["value", "Another String"]
+3. ["component", "component_ref"]
+4. ["component", ["several", "components"]]
+5. ["list", ["A ", "List ", "Of ", "Strings"]]
+6. ["list", [["component", "a"], "mixed", ["component", "list"]]] 
