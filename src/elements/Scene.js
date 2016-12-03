@@ -3,20 +3,18 @@ import { connect } from 'react-redux';
 import _isString from 'lodash/isString';
 import _isArray from 'lodash/isArray';
 
-import ComponentBuilder from './ComponentBuilder';
-
 /*
  * Scene Builder Class
  */
-class SceneBuilder extends React.Component {
+class Scene extends React.Component {
     constructor(props) {
         super(props);
 
         this.renderComponent = this.renderComponent.bind(this);
     }
     renderComponent(component) {
-        let { Scene_ID, RComp, resolveStage } = this.props;
-        return <ComponentBuilder key={component} {...{Scene_ID, Component_ID: component, RComp, resolveStage}} />;
+        let { Scene_ID, Builder } = this.props;
+        return <Builder.Component key={component} Scene_ID={Scene_ID} Component_ID={component} />;
     }
     render() {
         let { Scene = {} } = this.props;
@@ -30,17 +28,16 @@ class SceneBuilder extends React.Component {
         return null;
     }
 }
-SceneBuilder.propTypes = {
+Scene.propTypes = {
     Scene_ID: PropTypes.string.isRequired,
-    RComp: PropTypes.object.isRequired,
-    resolveStage: PropTypes.func.isRequired,
+    //Builder
+    Builder: PropTypes.object.isRequired,
     //redux
     Scene: PropTypes.object
 };
 
-function mapStateToProps(state, props) {
-    let { resolveStage, Scene_ID} = props;
-    let Stage = resolveStage(state);
+function mapStateToProps(state, {Builder, Scene_ID}) {
+    let Stage = Builder.resolve(state);
     let Scene = Stage.scenes[Scene_ID];
     return {
         Scene
@@ -49,4 +46,4 @@ function mapStateToProps(state, props) {
 
 export default connect(
     mapStateToProps
-)(SceneBuilder);
+)(Scene);

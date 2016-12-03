@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
@@ -22,10 +20,6 @@ var _isArray2 = require('lodash/isArray');
 
 var _isArray3 = _interopRequireDefault(_isArray2);
 
-var _ComponentBuilder = require('./ComponentBuilder');
-
-var _ComponentBuilder2 = _interopRequireDefault(_ComponentBuilder);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -37,27 +31,26 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /*
  * Scene Builder Class
  */
-var SceneBuilder = function (_React$Component) {
-    _inherits(SceneBuilder, _React$Component);
+var Scene = function (_React$Component) {
+    _inherits(Scene, _React$Component);
 
-    function SceneBuilder(props) {
-        _classCallCheck(this, SceneBuilder);
+    function Scene(props) {
+        _classCallCheck(this, Scene);
 
-        var _this = _possibleConstructorReturn(this, (SceneBuilder.__proto__ || Object.getPrototypeOf(SceneBuilder)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (Scene.__proto__ || Object.getPrototypeOf(Scene)).call(this, props));
 
         _this.renderComponent = _this.renderComponent.bind(_this);
         return _this;
     }
 
-    _createClass(SceneBuilder, [{
+    _createClass(Scene, [{
         key: 'renderComponent',
         value: function renderComponent(component) {
             var _props = this.props,
                 Scene_ID = _props.Scene_ID,
-                RComp = _props.RComp,
-                resolveStage = _props.resolveStage;
+                Builder = _props.Builder;
 
-            return _react2.default.createElement(_ComponentBuilder2.default, _extends({ key: component }, { Scene_ID: Scene_ID, Component_ID: component, RComp: RComp, resolveStage: resolveStage }));
+            return _react2.default.createElement(Builder.Component, { key: component, Scene_ID: Scene_ID, Component_ID: component });
         }
     }, {
         key: 'render',
@@ -77,26 +70,26 @@ var SceneBuilder = function (_React$Component) {
         }
     }]);
 
-    return SceneBuilder;
+    return Scene;
 }(_react2.default.Component);
 
-SceneBuilder.propTypes = {
+Scene.propTypes = {
     Scene_ID: _react.PropTypes.string.isRequired,
-    RComp: _react.PropTypes.object.isRequired,
-    resolveStage: _react.PropTypes.func.isRequired,
+    //Builder
+    Builder: _react.PropTypes.object.isRequired,
     //redux
     Scene: _react.PropTypes.object
 };
 
-function mapStateToProps(state, props) {
-    var resolveStage = props.resolveStage,
-        Scene_ID = props.Scene_ID;
+function mapStateToProps(state, _ref) {
+    var Builder = _ref.Builder,
+        Scene_ID = _ref.Scene_ID;
 
-    var Stage = resolveStage(state);
+    var Stage = Builder.resolve(state);
     var Scene = Stage.scenes[Scene_ID];
     return {
         Scene: Scene
     };
 }
 
-exports.default = (0, _reactRedux.connect)(mapStateToProps)(SceneBuilder);
+exports.default = (0, _reactRedux.connect)(mapStateToProps)(Scene);

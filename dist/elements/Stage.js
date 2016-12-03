@@ -12,10 +12,6 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = require('react-redux');
 
-var _SceneBuilder = require('./SceneBuilder');
-
-var _SceneBuilder2 = _interopRequireDefault(_SceneBuilder);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27,44 +23,43 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /*
  * Stage Builder Class
  */
-var StageBuilder = function (_React$Component) {
-    _inherits(StageBuilder, _React$Component);
+var Stage = function (_React$Component) {
+    _inherits(Stage, _React$Component);
 
-    function StageBuilder(props) {
-        _classCallCheck(this, StageBuilder);
+    function Stage(props) {
+        _classCallCheck(this, Stage);
 
-        return _possibleConstructorReturn(this, (StageBuilder.__proto__ || Object.getPrototypeOf(StageBuilder)).call(this, props));
+        return _possibleConstructorReturn(this, (Stage.__proto__ || Object.getPrototypeOf(Stage)).call(this, props));
     }
 
-    _createClass(StageBuilder, [{
+    _createClass(Stage, [{
         key: 'render',
         value: function render() {
             var _props = this.props,
-                Stage = _props.Stage,
-                RComp = _props.RComp,
-                resolveStage = _props.resolveStage;
+                Builder = _props.Builder,
+                Stage = _props.Stage;
 
-            return _react2.default.createElement(_SceneBuilder2.default, { Scene_ID: Stage.root, RComp: RComp, resolveStage: resolveStage });
+            return _react2.default.createElement(Builder.Scene, { Scene_ID: Stage.root });
         }
     }]);
 
-    return StageBuilder;
+    return Stage;
 }(_react2.default.Component);
 
-StageBuilder.propTypes = {
-    RComp: _react.PropTypes.object.isRequired,
-    resolveStage: _react.PropTypes.func.isRequired,
+Stage.propTypes = {
+    //Builder
+    Builder: _react.PropTypes.object.isRequired,
     //redux
     Stage: _react.PropTypes.object.isRequired
 };
 
-function mapStateToProps(state, props) {
-    var resolveStage = props.resolveStage;
+function mapStateToProps(state, _ref) {
+    var Builder = _ref.Builder;
 
-    var Stage = resolveStage(state);
+    var Stage = Builder.resolve(state);
     return {
         Stage: Stage
     };
 }
 
-exports.default = (0, _reactRedux.connect)(mapStateToProps)(StageBuilder);
+exports.default = (0, _reactRedux.connect)(mapStateToProps)(Stage);
