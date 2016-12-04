@@ -21,9 +21,9 @@ class Builder {
         if(_isString(event)) event = { type: event };
         return (e, getVal = (e) => e.target.value) => this.dispatch({
             type: event.type,
-            Scene_ID: Component.props.Scene_ID,
-            Component_ID: Component.props.Component_ID,
-            attr: event.attr,
+            scene: Component.props.Scene_ID,
+            component: Component.props.Component_ID,
+            key: event.attr,
             value: getVal(e)
         });
     }
