@@ -43,6 +43,8 @@ var TypeParser = function () {
         this.typeDef = this.typeDef.bind(this);
         this.list = this.list.bind(this);
         this.identifier = this.identifier.bind(this);
+
+        return this.type;
     }
 
     _createClass(TypeParser, [{

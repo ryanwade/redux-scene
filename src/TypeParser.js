@@ -15,6 +15,8 @@ class TypeParser {
         this.typeDef = this.typeDef.bind(this);
         this.list = this.list.bind(this);
         this.identifier = this.identifier.bind(this);
+
+        return this.type;
     }
     type(data) {
         if(_isUndefined(data)) throw new TypeError("Tuple cannot be undefined");
