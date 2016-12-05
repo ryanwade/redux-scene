@@ -14,6 +14,7 @@ npm install react-foundation-lib
 ~~~
 
 ## Example
+### Seting up redux-scene
 ~~~ js
     import React from 'react';
     import { render } from 'react-dom';
@@ -21,17 +22,11 @@ npm install react-foundation-lib
     import { createStore } from 'redux';
     
     import * as MyComponents from 'react-foundation-lib';
-    import { Builder } from 'redux-scene';
-    function StageReducer(state, action) {
-        switch(action.type) {
-            //handle actions
-            default:
-                return state;
-        }
-    }
+    
+    import { Builder, reducer } from 'redux-scene';
 
     //Setup Redux
-    let store = createStore(StageReducer);
+    let store = createStore(reducer);
 
     //Setup StageBuilder
     function resolveUI(stage) {
@@ -39,6 +34,7 @@ npm install react-foundation-lib
     }
 
     let MyBuilder = new Builder(MyComponents, resolve, store.dispatch); 
+    
     //Render Stage
     render((
             <Provider store={store}>
@@ -47,6 +43,23 @@ npm install react-foundation-lib
         ),
         document.getElementById('root')
     );
+
+    //Adding components to redux state
+    import { actions, actionTypes } from 'redux-scene';
+    store.dispatch(actions.stage.addScene('layout'));
+    store.dispatch(actions.stage.setRoot('layout'));
+    store.dispatch(actions.scene.addComponent('layout','button'));
+    store.dispatch(actions.scene.addComponent('layout','text'));
+    store.dispatch(actions.scene.addComponent('layout','div1'));
+    store.dispatch(actions.scene.setRoot('layout', ['button','div1','text']));
+    store.dispatch(actions.component.setType('layout','button','Button'));
+    store.dispatch(actions.component.setAttr('layout','button', 'label', 'hi'));
+    store.dispatch(actions.component.setEvent('layout','button','onClick', {type: "ON_CLICK", attr: 'blah'}));
+    store.dispatch(actions.component.setType('layout','text','TextField'));
+    store.dispatch(actions.component.setAttr('layout','text','value', 'first'));
+    store.dispatch(actions.component.setEvent('layout','text','onChange', {type: actionTypes.component.SET_ATTR, attr: 'value'}));
+    store.dispatch(actions.component.setType('layout','div1','div'));
+    store.dispatch(actions.component.setContent('layout','div1',['component','button']));
 ~~~
 # <div id="Builder">Builder</div>
 The [Builder](#Builder) class configures the redux-stage 
