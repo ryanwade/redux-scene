@@ -7,6 +7,7 @@ import _isUndefined from 'lodash/isUndefined';
 import _isString from 'lodash/isString';
 import _isObject from 'lodash/isObject';
 
+import Immutable from 'immutable';
 /*
  * Component Builder Class
  */
@@ -26,25 +27,17 @@ class Component extends React.Component {
      * Get Attributes of the Component to render
      */
     getContent() {
-        let { Component: { content = null } } = this.props;
-        return this.parser(content);
+        let { Component } = this.props;
+        return this.parser(Component.get("content"));
     }
     getAttrs() {
-        let { Component: { attrs = {} } } = this.props;
-        let ret = {};
-        Object.keys(attrs).map(attr => {
-            ret[attr] = this.parser(attrs[attr]);
-        });
-        return ret;
+        let { Component } = this.props;
+        return Component.get("attrs", Immutable.Map()).map((val) => this.parser(val)).toJS();
     }
+    
     getEvents() {
-        let { Component: { events = {} } } = this.props;
-        let { Builder } = this.props;
-        let ret = {};
-        Object.keys(events).map(attr => {
-            ret[attr] = Builder.setDispatch(this, events[attr]);
-        });
-        return ret;
+        let { Component, Builder } = this.props;
+        return Component.get("events", Immutable.Map()).map((val) => Builder.setDispatch(this, val)).toJS();
     }
     /*
      * Render Component
@@ -63,7 +56,8 @@ class Component extends React.Component {
         if(!_isObject(Component)) {
             return <Builder.Scene Scene_ID={Component_ID} />;
         }
-        let ReactComponent = Builder.RComp[Component.type] || Component.type;
+        let type = Component.get("type");
+        let ReactComponent = Builder.RComp[type] || type;
         return (
             <ReactComponent {...this.getAttrs()} {...this.getEvents()} >
                 {this.getContent()}
@@ -83,8 +77,8 @@ Component.propTypes = {
 
 function mapStateToProps(state, { Builder, Scene_ID, Component_ID }) {
     let Stage = Builder.resolve(state);
-    let Scene = Stage.scenes[Scene_ID];
-    let Component = Scene.components[Component_ID];
+    let Scene =  Stage.getIn(["scenes", Scene_ID], Immutable.Map());
+    let Component = Scene.getIn(["components", Component_ID], Immutable.Map());
     return {
         Scene,
         Component

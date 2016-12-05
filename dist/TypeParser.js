@@ -50,7 +50,7 @@ var TypeParser = function () {
     _createClass(TypeParser, [{
         key: 'type',
         value: function type(data) {
-            if ((0, _isUndefined3.default)(data)) throw new TypeError("Tuple cannot be undefined");
+            if ((0, _isUndefined3.default)(data)) return undefined;
             if (!this.typeDef(data)) return data;
             switch (data[0]) {
                 case "list":

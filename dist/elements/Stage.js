@@ -39,7 +39,8 @@ var Stage = function (_React$Component) {
                 Builder = _props.Builder,
                 Stage = _props.Stage;
 
-            return _react2.default.createElement(Builder.Scene, { Scene_ID: Stage.root });
+            var Scene_ID = Stage.get("root");
+            return _react2.default.createElement(Builder.Scene, { Scene_ID: Scene_ID });
         }
     }]);
 

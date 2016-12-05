@@ -55,16 +55,15 @@ var Scene = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _props$Scene = this.props.Scene,
-                Scene = _props$Scene === undefined ? {} : _props$Scene;
-            var _Scene$root = Scene.root,
-                root = _Scene$root === undefined ? null : _Scene$root;
+            var Scene = this.props.Scene;
 
-            if ((0, _isString3.default)(root)) return this.renderComponent(Scene.root);
+            if (Scene === null) return null;
+            var root = Scene.get("root");
+            if ((0, _isString3.default)(root)) return this.renderComponent(root);
             if ((0, _isArray3.default)(root)) return _react2.default.createElement(
                 'div',
                 null,
-                Scene.root.map(this.renderComponent)
+                root.map(this.renderComponent)
             );
             return null;
         }
@@ -86,7 +85,7 @@ function mapStateToProps(state, _ref) {
         Scene_ID = _ref.Scene_ID;
 
     var Stage = Builder.resolve(state);
-    var Scene = Stage.scenes[Scene_ID];
+    var Scene = Stage.getIn(["scenes", Scene_ID], null);
     return {
         Scene: Scene
     };

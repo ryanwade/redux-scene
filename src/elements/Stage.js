@@ -11,8 +11,9 @@ class Stage extends React.Component {
 
     render() {
         let { Builder, Stage } = this.props;
+        let Scene_ID = Stage.get("root");
         return (
-            <Builder.Scene Scene_ID={Stage.root} />
+            <Builder.Scene Scene_ID={Scene_ID} />
         );
     }
 }

@@ -30,6 +30,10 @@ var _isObject2 = require('lodash/isObject');
 
 var _isObject3 = _interopRequireDefault(_isObject2);
 
+var _immutable = require('immutable');
+
+var _immutable2 = _interopRequireDefault(_immutable);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -66,39 +70,33 @@ var Component = function (_React$Component) {
     _createClass(Component, [{
         key: 'getContent',
         value: function getContent() {
-            var _props$Component$cont = this.props.Component.content,
-                content = _props$Component$cont === undefined ? null : _props$Component$cont;
+            var Component = this.props.Component;
 
-            return this.parser(content);
+            return this.parser(Component.get("content"));
         }
     }, {
         key: 'getAttrs',
         value: function getAttrs() {
             var _this2 = this;
 
-            var _props$Component$attr = this.props.Component.attrs,
-                attrs = _props$Component$attr === undefined ? {} : _props$Component$attr;
+            var Component = this.props.Component;
 
-            var ret = {};
-            Object.keys(attrs).map(function (attr) {
-                ret[attr] = _this2.parser(attrs[attr]);
-            });
-            return ret;
+            return Component.get("attrs", _immutable2.default.Map()).map(function (val) {
+                return _this2.parser(val);
+            }).toJS();
         }
     }, {
         key: 'getEvents',
         value: function getEvents() {
             var _this3 = this;
 
-            var _props$Component$even = this.props.Component.events,
-                events = _props$Component$even === undefined ? {} : _props$Component$even;
-            var Builder = this.props.Builder;
+            var _props = this.props,
+                Component = _props.Component,
+                Builder = _props.Builder;
 
-            var ret = {};
-            Object.keys(events).map(function (attr) {
-                ret[attr] = Builder.setDispatch(_this3, events[attr]);
-            });
-            return ret;
+            return Component.get("events", _immutable2.default.Map()).map(function (val) {
+                return Builder.setDispatch(_this3, val);
+            }).toJS();
         }
         /*
          * Render Component
@@ -109,9 +107,9 @@ var Component = function (_React$Component) {
         value: function renderComponent(id) {
             if ((0, _isUndefined3.default)(id)) return null;
             if (!(0, _isString3.default)(id)) throw new TypeError("Component identifier must be a string: " + id);
-            var _props = this.props,
-                Builder = _props.Builder,
-                Scene_ID = _props.Scene_ID;
+            var _props2 = this.props,
+                Builder = _props2.Builder,
+                Scene_ID = _props2.Scene_ID;
 
             return _react2.default.createElement(Builder.Component, { key: id, Scene_ID: Scene_ID, Component_ID: id });
         }
@@ -122,15 +120,16 @@ var Component = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _props2 = this.props,
-                Builder = _props2.Builder,
-                Component_ID = _props2.Component_ID,
-                Component = _props2.Component;
+            var _props3 = this.props,
+                Builder = _props3.Builder,
+                Component_ID = _props3.Component_ID,
+                Component = _props3.Component;
 
             if (!(0, _isObject3.default)(Component)) {
                 return _react2.default.createElement(Builder.Scene, { Scene_ID: Component_ID });
             }
-            var ReactComponent = Builder.RComp[Component.type] || Component.type;
+            var type = Component.get("type");
+            var ReactComponent = Builder.RComp[type] || type;
             return _react2.default.createElement(
                 ReactComponent,
                 _extends({}, this.getAttrs(), this.getEvents()),
@@ -158,8 +157,8 @@ function mapStateToProps(state, _ref) {
         Component_ID = _ref.Component_ID;
 
     var Stage = Builder.resolve(state);
-    var Scene = Stage.scenes[Scene_ID];
-    var Component = Scene.components[Component_ID];
+    var Scene = Stage.getIn(["scenes", Scene_ID], _immutable2.default.Map());
+    var Component = Scene.getIn(["components", Component_ID], _immutable2.default.Map());
     return {
         Scene: Scene,
         Component: Component

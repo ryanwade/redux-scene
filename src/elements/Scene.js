@@ -17,12 +17,13 @@ class Scene extends React.Component {
         return <Builder.Component key={component} Scene_ID={Scene_ID} Component_ID={component} />;
     }
     render() {
-        let { Scene = {} } = this.props;
-        let { root = null } = Scene;
-        if (_isString(root)) return this.renderComponent(Scene.root);
+        let { Scene } = this.props;
+        if(Scene === null) return null;
+        let root = Scene.get("root");
+        if (_isString(root)) return this.renderComponent(root);
         if (_isArray(root)) return (
             <div>
-                {Scene.root.map(this.renderComponent)}
+                {root.map(this.renderComponent)}
             </div>
         );
         return null;
@@ -38,7 +39,7 @@ Scene.propTypes = {
 
 function mapStateToProps(state, {Builder, Scene_ID}) {
     let Stage = Builder.resolve(state);
-    let Scene = Stage.scenes[Scene_ID];
+    let Scene = Stage.getIn(["scenes", Scene_ID], null);
     return {
         Scene
     };

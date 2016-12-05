@@ -19,7 +19,7 @@ class TypeParser {
         return this.type;
     }
     type(data) {
-        if(_isUndefined(data)) throw new TypeError("Tuple cannot be undefined");
+        if(_isUndefined(data)) return undefined;
         if(!this.typeDef(data)) return data;
         switch(data[0]) {
             case "list":
