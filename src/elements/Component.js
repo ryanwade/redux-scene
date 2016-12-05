@@ -34,7 +34,7 @@ class Component extends React.Component {
         let { Component } = this.props;
         return Component.get("attrs", Immutable.Map()).map((val) => this.parser(val)).toJS();
     }
-    
+
     getEvents() {
         let { Component, Builder } = this.props;
         return Component.get("events", Immutable.Map()).map((val) => Builder.setDispatch(this, val)).toJS();
