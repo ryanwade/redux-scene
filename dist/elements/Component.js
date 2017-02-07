@@ -158,7 +158,7 @@ function mapStateToProps(state, _ref) {
 
     var Stage = Builder.resolve(state);
     var Scene = Stage.getIn(["scenes", Scene_ID], _immutable2.default.Map());
-    var Component = Scene.getIn(["components", Component_ID], _immutable2.default.Map());
+    var Component = Scene.getIn(["components", Component_ID]);
     return {
         Scene: Scene,
         Component: Component

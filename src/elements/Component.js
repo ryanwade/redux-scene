@@ -78,7 +78,7 @@ Component.propTypes = {
 function mapStateToProps(state, { Builder, Scene_ID, Component_ID }) {
     let Stage = Builder.resolve(state);
     let Scene =  Stage.getIn(["scenes", Scene_ID], Immutable.Map());
-    let Component = Scene.getIn(["components", Component_ID], Immutable.Map());
+    let Component = Scene.getIn(["components", Component_ID]);
     return {
         Scene,
         Component
