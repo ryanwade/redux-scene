@@ -39,13 +39,17 @@ var Builder = function () {
 
     _createClass(Builder, [{
         key: 'setDispatch',
-        value: function setDispatch(Component, event) {
+        value: function setDispatch(Component, event, attrs) {
             var _this = this;
 
             if ((0, _isString3.default)(event)) event = { type: event };
             return function (e) {
                 var getVal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function (e) {
-                    return e.target.value;
+                    if (event.attr == 'value') {
+                        return e.target.value;
+                    } else {
+                        return attrs[event.attr];
+                    }
                 };
                 return _this.dispatch({
                     type: event.type,

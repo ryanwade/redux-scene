@@ -87,7 +87,7 @@ var Component = function (_React$Component) {
         }
     }, {
         key: 'getEvents',
-        value: function getEvents() {
+        value: function getEvents(attrs) {
             var _this3 = this;
 
             var _props = this.props,
@@ -95,7 +95,7 @@ var Component = function (_React$Component) {
                 Builder = _props.Builder;
 
             return Component.get("events", _immutable2.default.Map()).map(function (val) {
-                return Builder.setDispatch(_this3, val);
+                return Builder.setDispatch(_this3, val, attrs);
             }).toJS();
         }
         /*
@@ -130,9 +130,10 @@ var Component = function (_React$Component) {
             }
             var type = Component.get("type");
             var ReactComponent = Builder.RComp[type] || type;
+            var attrs = this.getAttrs();
             return _react2.default.createElement(
                 ReactComponent,
-                _extends({}, this.getAttrs(), this.getEvents()),
+                _extends({}, attrs, this.getEvents(attrs)),
                 this.getContent()
             );
         }

@@ -17,9 +17,15 @@ class Builder {
         this.setDispatch = this.setDispatch.bind(this);
     }
 
-    setDispatch(Component, event) {
+    setDispatch(Component, event, attrs) {
         if(_isString(event)) event = { type: event };
-        return (e, getVal = (e) => e.target.value) => this.dispatch({
+        return (e, getVal = (e) => {
+            if(event.attr == 'value') {
+                return e.target.value;
+            } else {
+                return attrs[event.attr];
+            }
+        }) => this.dispatch({
             type: event.type,
             scene: Component.props.Scene_ID,
             component: Component.props.Component_ID,

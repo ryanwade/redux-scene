@@ -35,9 +35,9 @@ class Component extends React.Component {
         return Component.get("attrs", Immutable.Map()).map((val) => this.parser(val)).toJS();
     }
 
-    getEvents() {
+    getEvents(attrs) {
         let { Component, Builder } = this.props;
-        return Component.get("events", Immutable.Map()).map((val) => Builder.setDispatch(this, val)).toJS();
+        return Component.get("events", Immutable.Map()).map((val) => Builder.setDispatch(this, val, attrs)).toJS();
     }
     /*
      * Render Component
@@ -58,8 +58,9 @@ class Component extends React.Component {
         }
         let type = Component.get("type");
         let ReactComponent = Builder.RComp[type] || type;
+        let attrs = this.getAttrs();
         return (
-            <ReactComponent {...this.getAttrs()} {...this.getEvents()} >
+            <ReactComponent {...attrs} {...this.getEvents(attrs)} >
                 {this.getContent()}
             </ReactComponent>
         );
